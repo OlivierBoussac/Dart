@@ -1,58 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:padding="8dp">
 
     <EditText
         android:id="@+id/playerName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Joueur"
-        android:textSize="18sp"
-        app:layout_constraintWidth_percent="0.3"
-        app:layout_constraintEnd_toStartOf="@+id/scoreText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_weight="0.25"
+        android:hint="Nom du joueur"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/scoreText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="0.15"
         android:text="301"
-        android:textSize="18sp"
-        app:layout_constraintWidth_percent="0.2"
-        app:layout_constraintEnd_toStartOf="@+id/valueInput"
-        app:layout_constraintStart_toEndOf="@+id/playerName"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:gravity="center" />
 
     <EditText
         android:id="@+id/valueInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="0.4"
         android:hint="Entrez une valeur"
-        android:inputType="numberSigned"
-        android:textSize="18sp"
-        app:layout_constraintWidth_percent="0.25"
-        app:layout_constraintEnd_toStartOf="@+id/okButton"
-        app:layout_constraintStart_toEndOf="@+id/scoreText"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:inputType="number"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:gravity="center"
+        android:layout_marginEnd="8dp" /> <!-- Added margin end to create space between EditText and Button -->
 
     <Button
         android:id="@+id/okButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="0.15"
         android:text="OK"
-        android:textSize="18sp"
-        app:layout_constraintWidth_percent="0.25"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/valueInput"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:backgroundTint="@color/button_brown" />
+</LinearLayout>
