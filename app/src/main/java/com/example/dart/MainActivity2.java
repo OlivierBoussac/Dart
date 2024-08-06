@@ -1,11 +1,9 @@
 package com.example.dart;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.InputType;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -17,21 +15,43 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity2 extends AppCompatActivity {
 
-    private int numberOfPlayers;
-    private LinearLayout containerPlayers;
-    private int marginInPx;
+    private List<Button> okButtons = new ArrayList<>();
+    private int currentClickableButtonIndex = 0;
+    private static final String PREFERENCES_FILE = "com.example.dart.preferences";
+    private static final String KEY_RULE = "regle";
+    private static final String KEY_PLAYER_SCORES = "player_scores";
+    private static final String KEY_PLAYER_NAMES = "player_names";
+    private static final String KEY_CURRENT_INDEX = "current_index";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        numberOfPlayers = getIntent().getIntExtra("numberOfPlayers", 0);
-        containerPlayers = findViewById(R.id.containerPlayers);
+        // Retrieve the number of players from the intent
+        int numberOfPlayers = getIntent().getIntExtra("numberOfPlayers", 0);
+
+        // Get the selected rule
+        String regleSelect = getIntent().getStringExtra("regle");
+
+        // Save the rule in SharedPreferences
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(KEY_RULE, regleSelect);
+        editor.apply();
+
+        // Find the LinearLayout container for players
+        LinearLayout containerPlayers = findViewById(R.id.containerPlayers);
+
+        // Find home button
         Button buttonHome = findViewById(R.id.buttonHome);
 
+        // Use home button in order to display dialog for validation
         buttonHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,22 +59,106 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
-        int marginInDp = 16;
-        final float scale = getResources().getDisplayMetrics().density;
-        marginInPx = (int) (marginInDp * scale + 0.5f);
+        // Dynamically add views for each player
+        for (int i = 1; i <= numberOfPlayers; i++) {
+            // Inflate the player item layout
+            LayoutInflater inflater = LayoutInflater.from(this);
+            View playerItemView = inflater.inflate(R.layout.player_item, containerPlayers, false);
 
-        if (savedInstanceState == null) {
-            for (int i = 1; i <= numberOfPlayers; i++) {
-                addPlayerLayout("Joueur " + i, 301);
-            }
-        } else {
-            String[] playerNames = savedInstanceState.getStringArray("playerNames");
-            int[] playerScores = savedInstanceState.getIntArray("playerScores");
+            // Find and set up the player EditText for player name
+            EditText playerEditText = playerItemView.findViewById(R.id.playerName);
+            playerEditText.setText("Joueur " + i);
 
-            if (playerNames != null && playerScores != null) {
-                for (int i = 0; i < playerNames.length; i++) {
-                    addPlayerLayout(playerNames[i], playerScores[i]);
+            // Find and set up the score TextView
+            TextView textScore = playerItemView.findViewById(R.id.scoreText);
+            textScore.setText(regleSelect);
+
+            // Find and set up the EditText for score input
+            EditText editText = playerItemView.findViewById(R.id.valueInput);
+            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(3)}); // Limit to 3 digits
+
+            // Find and set up the OK Button
+            Button btnOk = playerItemView.findViewById(R.id.okButton);
+
+            // Add the OK button to the list
+            okButtons.add(btnOk);
+
+            btnOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String enteredValueStr = editText.getText().toString();
+
+                    if (!enteredValueStr.isEmpty()) {
+                        try {
+                            int currentValue = Integer.parseInt(textScore.getText().toString());
+                            int enteredValue = Integer.parseInt(enteredValueStr);
+
+                            // Perform the subtraction
+                            int newValue = currentValue - enteredValue;
+
+                            // Ensure the new value is valid
+                            if (enteredValue <= currentValue || enteredValue < 0) {
+                                if (enteredValue <= 180) {
+                                    if (newValue >= 0) {
+                                        textScore.setText(String.valueOf(newValue));
+                                        editText.setText(""); // Clear the input field
+
+                                        if (newValue == 0) {
+                                            showWinnerDialog(playerEditText.getText().toString());
+                                        }
+
+                                        // Disable the current button
+                                        okButtons.get(currentClickableButtonIndex).setEnabled(false);
+
+                                        // Move to the next button
+                                        currentClickableButtonIndex = (currentClickableButtonIndex + 1) % okButtons.size();
+                                        okButtons.get(currentClickableButtonIndex).setEnabled(true);
+                                    } else {
+                                        Toast.makeText(MainActivity2.this, "Le score ne peut pas être inférieur à 0.", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Toast.makeText(MainActivity2.this, "La valeur entrée est supérieure à la valeur maximale possible.", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(MainActivity2.this, "La valeur entrée est supérieure au score actuel.", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(MainActivity2.this, "Valeur entrée invalide.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity2.this, "Veuillez entrer une valeur.", Toast.LENGTH_SHORT).show();
+                    }
                 }
+            });
+
+            // Add the player item view to the container
+            containerPlayers.addView(playerItemView);
+
+            // Disable the OK button initially, except the first one
+            if (i != 1) {
+                btnOk.setEnabled(false);
+            }
+        }
+
+        // Restore state if available
+        if (savedInstanceState != null) {
+            int[] playerScores = savedInstanceState.getIntArray(KEY_PLAYER_SCORES);
+            String[] playerNames = savedInstanceState.getStringArray(KEY_PLAYER_NAMES);
+            currentClickableButtonIndex = savedInstanceState.getInt(KEY_CURRENT_INDEX);
+
+            if (playerScores != null && playerNames != null) {
+                for (int i = 0; i < playerScores.length; i++) {
+                    View playerItemView = containerPlayers.getChildAt(i);
+                    TextView textScore = playerItemView.findViewById(R.id.scoreText);
+                    EditText playerEditText = playerItemView.findViewById(R.id.playerName);
+
+                    textScore.setText(String.valueOf(playerScores[i]));
+                    playerEditText.setText(playerNames[i]);
+                }
+            }
+
+            for (int i = 0; i < okButtons.size(); i++) {
+                okButtons.get(i).setEnabled(i == currentClickableButtonIndex);
             }
         }
     }
@@ -63,95 +167,27 @@ public class MainActivity2 extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        int childCount = containerPlayers.getChildCount();
-        String[] playerNames = new String[childCount];
-        int[] playerScores = new int[childCount];
+        LinearLayout containerPlayers = findViewById(R.id.containerPlayers);
+        int playerCount = containerPlayers.getChildCount();
+        int[] playerScores = new int[playerCount];
+        String[] playerNames = new String[playerCount];
 
-        for (int i = 0; i < childCount; i++) {
-            LinearLayout playerLayout = (LinearLayout) containerPlayers.getChildAt(i);
-            EditText playerEditText = (EditText) playerLayout.findViewById(R.id.playerName);
-            TextView scoreText = (TextView) playerLayout.findViewById(R.id.scoreText);
+        for (int i = 0; i < playerCount; i++) {
+            View playerItemView = containerPlayers.getChildAt(i);
+            TextView textScore = playerItemView.findViewById(R.id.scoreText);
+            EditText playerEditText = playerItemView.findViewById(R.id.playerName);
 
+            playerScores[i] = Integer.parseInt(textScore.getText().toString());
             playerNames[i] = playerEditText.getText().toString();
-            playerScores[i] = Integer.parseInt(scoreText.getText().toString());
         }
 
-        outState.putStringArray("playerNames", playerNames);
-        outState.putIntArray("playerScores", playerScores);
-        outState.putInt("numberOfPlayers", childCount);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        String[] playerNames = savedInstanceState.getStringArray("playerNames");
-        int[] playerScores = savedInstanceState.getIntArray("playerScores");
-        int numberOfPlayers = savedInstanceState.getInt("numberOfPlayers");
-
-        if (playerNames != null && playerScores != null) {
-            containerPlayers.removeAllViews();
-
-            for (int i = 0; i < numberOfPlayers; i++) {
-                addPlayerLayout(playerNames[i], playerScores[i]);
-            }
-        }
-    }
-
-    private void addPlayerLayout(String playerName, int playerScore) {
-        LinearLayout playerLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.player_item, containerPlayers, false);
-
-        EditText playerEditText = playerLayout.findViewById(R.id.playerName);
-        playerEditText.setText(playerName);
-
-        TextView scoreText = playerLayout.findViewById(R.id.scoreText);
-        scoreText.setText(String.valueOf(playerScore));
-
-        EditText valueInput = playerLayout.findViewById(R.id.valueInput);
-        Button okButton = playerLayout.findViewById(R.id.okButton);
-
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String enteredValueStr = valueInput.getText().toString();
-
-                if (!enteredValueStr.isEmpty()) {
-                    try {
-                        int currentValue = Integer.parseInt(scoreText.getText().toString());
-                        int enteredValue = Integer.parseInt(enteredValueStr);
-
-                        int newValue = currentValue - enteredValue;
-
-                        if (enteredValue <= currentValue || enteredValue < 0) {
-                            if (enteredValue <= 180) {
-                                if (newValue >= 0) {
-                                    scoreText.setText(String.valueOf(newValue));
-                                    if (newValue == 0) {
-                                        showWinnerDialog(playerEditText.getText().toString());
-                                    }
-                                    valueInput.setText(""); // Clear the input field after updating the score
-                                } else {
-                                    Toast.makeText(MainActivity2.this, "Le score ne peut pas être inférieur à 0.", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(MainActivity2.this, "La valeur entrée est supérieure à la valeur maximale possible.", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(MainActivity2.this, "La valeur entrée est supérieure au score actuel.", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(MainActivity2.this, "Valeur entrée invalide.", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(MainActivity2.this, "Veuillez entrer une valeur.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        containerPlayers.addView(playerLayout);
+        outState.putIntArray(KEY_PLAYER_SCORES, playerScores);
+        outState.putStringArray(KEY_PLAYER_NAMES, playerNames);
+        outState.putInt(KEY_CURRENT_INDEX, currentClickableButtonIndex);
     }
 
     private void showPopupLeave() {
+        // Inflate the custom dialog layout
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_validation, null);
 
@@ -160,6 +196,7 @@ public class MainActivity2 extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
 
+        // Set up buttons
         Button btnYes = dialogView.findViewById(R.id.btnYes);
         Button btnNo = dialogView.findViewById(R.id.btnNo);
 
@@ -183,12 +220,15 @@ public class MainActivity2 extends AppCompatActivity {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_winner, null);
 
+        // Set up the custom dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView);
 
+        // Get the TextView and set the winner name
         TextView tvWinnerName = dialogView.findViewById(R.id.tvWinnerName);
         tvWinnerName.setText("Le gagnant est " + winnerName);
 
+        // Set up buttons
         Button btnRestart = dialogView.findViewById(R.id.btnRestart);
         Button btnHome = dialogView.findViewById(R.id.btnHome);
 
@@ -197,7 +237,20 @@ public class MainActivity2 extends AppCompatActivity {
         btnRestart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetScores();
+                for (int i = 0; i < okButtons.size(); i++) {
+                    View parent = (View) okButtons.get(i).getParent();
+                    TextView scoreText = parent.findViewById(R.id.scoreText);
+                    scoreText.setText(getIntent().getStringExtra("regle"));
+                }
+
+                // Disable all OK buttons except the first one
+                for (int i = 0; i < okButtons.size(); i++) {
+                    okButtons.get(i).setEnabled(i == 0);
+                }
+
+                // Reset the current clickable button index
+                currentClickableButtonIndex = 0;
+
                 alertDialog.dismiss();
             }
         });
@@ -212,13 +265,5 @@ public class MainActivity2 extends AppCompatActivity {
         });
 
         alertDialog.show();
-    }
-
-    private void resetScores() {
-        for (int i = 0; i < containerPlayers.getChildCount(); i++) {
-            LinearLayout playerLayout = (LinearLayout) containerPlayers.getChildAt(i);
-            TextView scoreText = playerLayout.findViewById(R.id.scoreText);
-            scoreText.setText("301");
-        }
     }
 }

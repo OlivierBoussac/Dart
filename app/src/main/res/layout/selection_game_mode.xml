@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/btnMode301"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/button_brown"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:text="Mode 301"/>
+
+    <Button
+        android:id="@+id/btnMode501"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mode 501"
+        android:backgroundTint="@color/button_brown"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"
+        android:textSize="30sp" />
+
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:backgroundTint="@color/button_back"
+        android:text="Retour"
+        android:textSize="30sp" />
+</LinearLayout>

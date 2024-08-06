@@ -9,9 +9,9 @@
         android:id="@+id/playerName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.25"
+        android:layout_weight="0.35"
         android:hint="Nom du joueur"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:padding="8dp"
         android:gravity="center" />
 
@@ -19,9 +19,9 @@
         android:id="@+id/scoreText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.15"
-        android:text="301"
-        android:textSize="16sp"
+        android:layout_weight="0.25"
+        android:text=""
+        android:textSize="18sp"
         android:padding="8dp"
         android:gravity="center" />
 
@@ -29,13 +29,13 @@
         android:id="@+id/valueInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.4"
-        android:hint="Entrez une valeur"
+        android:layout_weight="0.25"
+        android:hint="Score"
         android:inputType="number"
-        android:textSize="16sp"
-        android:padding="10dp"
-        android:gravity="center"
-        android:layout_marginEnd="8dp" /> <!-- Added margin end to create space between EditText and Button -->
+        android:maxLength="3"
+        android:textSize="18sp"
+        android:padding="8dp"
+        android:gravity="center" />
 
     <Button
         android:id="@+id/okButton"
@@ -43,7 +43,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.15"
         android:text="OK"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:padding="8dp"
-        android:backgroundTint="@color/button_brown" />
+        android:backgroundTint="@color/button_brown"
+        android:layout_marginLeft="8dp" />
+
 </LinearLayout>

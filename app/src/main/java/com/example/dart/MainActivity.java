@@ -6,17 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.appcompat.app.AlertDialog;
 
 public class MainActivity extends AppCompatActivity {
+
+    private LayoutInflater inflater;
+    private LinearLayout containerMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,64 +23,65 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        // Initialisation des vues
+        inflater = LayoutInflater.from(this);
+        containerMenu = findViewById(R.id.containerMenu);
+
+        // Lancer le processus de démarrage du jeu
+        newGame();
+    }
+
+    private void newGame() {
+        // Inflate the player item layout
+        View menuView = inflater.inflate(R.layout.new_game, containerMenu, false);
         // Set up the button and its click listener
-        Button button = findViewById(R.id.button);
+        Button button = menuView.findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopupGame();
+                containerMenu.removeView(menuView);
+                selectGame();
             }
         });
+        containerMenu.addView(menuView);
     }
 
-    private void showPopupGame() {
-        // Inflate the custom dialog layout
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_new_game, null);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-
-        AlertDialog alertDialog = builder.create();
-
-        // Set up title
-        TextView title = dialogView.findViewById(R.id.title);
-
-        // Set up buttons
-        Button btnMark301 = dialogView.findViewById(R.id.btnMark301);
-        Button btnBack = dialogView.findViewById(R.id.btnBack);
-
-        btnMark301.setOnClickListener(new View.OnClickListener() {
+    private void selectGame() {
+        View menuSelectGameView = inflater.inflate(R.layout.selection_game_mode, containerMenu, false);
+        Button button301 = menuSelectGameView.findViewById(R.id.btnMode301);
+        button301.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertDialog.dismiss();
-                showPopupNumberPlayer();
+                containerMenu.removeView(menuSelectGameView);
+                SelectNbrPlayer("301");
             }
         });
-
-        btnBack.setOnClickListener(v -> {
-            alertDialog.dismiss();
+        Button button501 = menuSelectGameView.findViewById(R.id.btnMode501);
+        button501.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                containerMenu.removeView(menuSelectGameView);
+                SelectNbrPlayer("501");
+            }
         });
-
-        alertDialog.show();
+        Button buttonBack = menuSelectGameView.findViewById(R.id.btnBack);
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                containerMenu.removeView(menuSelectGameView);
+                newGame();
+            }
+        });
+        containerMenu.addView(menuSelectGameView);
     }
 
-    private void showPopupNumberPlayer() {
-        // Inflate the custom dialog layout
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_nbr_player, null);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-
-        AlertDialog alertDialog = builder.create();
-
-        // Set up buttons
-        Button btnBack = dialogView.findViewById(R.id.btnBack);
-        Button btnOk = dialogView.findViewById(R.id.btnOk);
+    private void SelectNbrPlayer(String regle) {
+        View menuSelectNbrPlayerView = inflater.inflate(R.layout.selection_nbr_player, containerMenu, false);
+        Button btnBack = menuSelectNbrPlayerView.findViewById(R.id.btnBack);
+        Button btnOk = menuSelectNbrPlayerView.findViewById(R.id.btnOk);
 
         btnOk.setOnClickListener(v -> {
-            EditText editTextNumber = dialogView.findViewById(R.id.editTextNumber);
+            EditText editTextNumber = menuSelectNbrPlayerView.findViewById(R.id.editTextNumber);
             String numberStr = editTextNumber.getText().toString();
             if (!numberStr.isEmpty()) {
                 try {
@@ -89,9 +89,8 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(MainActivity.this, MainActivity2.class);
                     intent.putExtra("numberOfPlayers", number);
+                    intent.putExtra("regle", regle);
                     startActivity(intent);
-
-                    alertDialog.dismiss();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "Veuillez entrer un nombre valide", Toast.LENGTH_SHORT).show();
                 }
@@ -101,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnBack.setOnClickListener(v -> {
-            alertDialog.dismiss();
+            containerMenu.removeView(menuSelectNbrPlayerView);
+            selectGame();
         });
-
-        alertDialog.show();
+        containerMenu.addView(menuSelectNbrPlayerView);
     }
 }
