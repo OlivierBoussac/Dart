@@ -3,6 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background_color">#065032</color>
+    <color name="background_color_main2">#87A27D</color>
     <color name="string_menu_color">#900712</color>
     <color name="light_gray">#E0E0E0</color>
     <color name="button_brown">#4D2102</color>
