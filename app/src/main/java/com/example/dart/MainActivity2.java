@@ -1,7 +1,6 @@
 package com.example.dart;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
@@ -20,30 +19,21 @@ import java.util.List;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    private List<Button> okButtons = new ArrayList<>();
-    private int currentClickableButtonIndex = 0;
-    private static final String PREFERENCES_FILE = "com.example.dart.preferences";
-    private static final String KEY_RULE = "regle";
     private static final String KEY_PLAYER_SCORES = "player_scores";
     private static final String KEY_PLAYER_NAMES = "player_names";
     private static final String KEY_CURRENT_INDEX = "current_index";
+
+    private List<Button> okButtons = new ArrayList<>();
+    private int currentClickableButtonIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        // Retrieve the number of players from the intent
+        // Retrieve the number of players and the selected rule from the intent
         int numberOfPlayers = getIntent().getIntExtra("numberOfPlayers", 0);
-
-        // Get the selected rule
         String regleSelect = getIntent().getStringExtra("regle");
-
-        // Save the rule in SharedPreferences
-        SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY_RULE, regleSelect);
-        editor.apply();
 
         // Find the LinearLayout container for players
         LinearLayout containerPlayers = findViewById(R.id.containerPlayers);
@@ -51,13 +41,13 @@ public class MainActivity2 extends AppCompatActivity {
         // Find home button
         Button buttonHome = findViewById(R.id.buttonHome);
 
-        // Use home button in order to display dialog for validation
-        buttonHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopupLeave();
-            }
-        });
+        // Use home button to display dialog for validation
+        buttonHome.setOnClickListener(v -> showPopupLeave());
+
+        // Define the margin value
+        int marginInDp = 16;
+        final float scale = getResources().getDisplayMetrics().density;
+        int marginInPx = (int) (marginInDp * scale + 0.5f);
 
         // Dynamically add views for each player
         for (int i = 1; i <= numberOfPlayers; i++) {
@@ -69,7 +59,7 @@ public class MainActivity2 extends AppCompatActivity {
             EditText playerEditText = playerItemView.findViewById(R.id.playerName);
             playerEditText.setText("Joueur " + i);
 
-            // Find and set up the score TextView
+            // Find and set up the 301 TextView
             TextView textScore = playerItemView.findViewById(R.id.scoreText);
             textScore.setText(regleSelect);
 
@@ -83,51 +73,48 @@ public class MainActivity2 extends AppCompatActivity {
             // Add the OK button to the list
             okButtons.add(btnOk);
 
-            btnOk.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String enteredValueStr = editText.getText().toString();
+            btnOk.setOnClickListener(v -> {
+                String enteredValueStr = editText.getText().toString();
 
-                    if (!enteredValueStr.isEmpty()) {
-                        try {
-                            int currentValue = Integer.parseInt(textScore.getText().toString());
-                            int enteredValue = Integer.parseInt(enteredValueStr);
+                if (!enteredValueStr.isEmpty()) {
+                    try {
+                        int currentValue = Integer.parseInt(textScore.getText().toString());
+                        int enteredValue = Integer.parseInt(enteredValueStr);
 
-                            // Perform the subtraction
-                            int newValue = currentValue - enteredValue;
+                        // Perform the subtraction
+                        int newValue = currentValue - enteredValue;
 
-                            // Ensure the new value is valid
-                            if (enteredValue <= currentValue || enteredValue < 0) {
-                                if (enteredValue <= 180) {
-                                    if (newValue >= 0) {
-                                        textScore.setText(String.valueOf(newValue));
-                                        editText.setText(""); // Clear the input field
+                        // Ensure the new value is valid
+                        if (enteredValue <= currentValue && enteredValue >= 0) {
+                            if (enteredValue <= 180) {
+                                if (newValue >= 0) {
+                                    textScore.setText(String.valueOf(newValue));
+                                    editText.setText(""); // Clear the input field
 
-                                        if (newValue == 0) {
-                                            showWinnerDialog(playerEditText.getText().toString());
-                                        }
-
-                                        // Disable the current button
-                                        okButtons.get(currentClickableButtonIndex).setEnabled(false);
-
-                                        // Move to the next button
-                                        currentClickableButtonIndex = (currentClickableButtonIndex + 1) % okButtons.size();
-                                        okButtons.get(currentClickableButtonIndex).setEnabled(true);
-                                    } else {
-                                        Toast.makeText(MainActivity2.this, "Le score ne peut pas être inférieur à 0.", Toast.LENGTH_SHORT).show();
+                                    if (newValue == 0) {
+                                        showWinnerDialog(playerEditText.getText().toString());
                                     }
+
+                                    // Disable the current button
+                                    okButtons.get(currentClickableButtonIndex).setEnabled(false);
+
+                                    // Move to the next button
+                                    currentClickableButtonIndex = (currentClickableButtonIndex + 1) % okButtons.size();
+                                    okButtons.get(currentClickableButtonIndex).setEnabled(true);
                                 } else {
-                                    Toast.makeText(MainActivity2.this, "La valeur entrée est supérieure à la valeur maximale possible.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity2.this, "Le score ne peut pas être inférieur à 0.", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                Toast.makeText(MainActivity2.this, "La valeur entrée est supérieure au score actuel.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity2.this, "La valeur entrée est supérieure à la valeur maximale possible.", Toast.LENGTH_SHORT).show();
                             }
-                        } catch (NumberFormatException e) {
-                            Toast.makeText(MainActivity2.this, "Valeur entrée invalide.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity2.this, "La valeur entrée est supérieure au score actuel.", Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        Toast.makeText(MainActivity2.this, "Veuillez entrer une valeur.", Toast.LENGTH_SHORT).show();
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(MainActivity2.this, "Valeur entrée invalide.", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(MainActivity2.this, "Veuillez entrer une valeur.", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -137,28 +124,6 @@ public class MainActivity2 extends AppCompatActivity {
             // Disable the OK button initially, except the first one
             if (i != 1) {
                 btnOk.setEnabled(false);
-            }
-        }
-
-        // Restore state if available
-        if (savedInstanceState != null) {
-            int[] playerScores = savedInstanceState.getIntArray(KEY_PLAYER_SCORES);
-            String[] playerNames = savedInstanceState.getStringArray(KEY_PLAYER_NAMES);
-            currentClickableButtonIndex = savedInstanceState.getInt(KEY_CURRENT_INDEX);
-
-            if (playerScores != null && playerNames != null) {
-                for (int i = 0; i < playerScores.length; i++) {
-                    View playerItemView = containerPlayers.getChildAt(i);
-                    TextView textScore = playerItemView.findViewById(R.id.scoreText);
-                    EditText playerEditText = playerItemView.findViewById(R.id.playerName);
-
-                    textScore.setText(String.valueOf(playerScores[i]));
-                    playerEditText.setText(playerNames[i]);
-                }
-            }
-
-            for (int i = 0; i < okButtons.size(); i++) {
-                okButtons.get(i).setEnabled(i == currentClickableButtonIndex);
             }
         }
     }
@@ -186,6 +151,37 @@ public class MainActivity2 extends AppCompatActivity {
         outState.putInt(KEY_CURRENT_INDEX, currentClickableButtonIndex);
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        LinearLayout containerPlayers = findViewById(R.id.containerPlayers);
+        int playerCount = containerPlayers.getChildCount();
+
+        int[] playerScores = savedInstanceState.getIntArray(KEY_PLAYER_SCORES);
+        String[] playerNames = savedInstanceState.getStringArray(KEY_PLAYER_NAMES);
+        currentClickableButtonIndex = savedInstanceState.getInt(KEY_CURRENT_INDEX);
+
+        if (playerScores != null && playerNames != null && playerScores.length == playerNames.length) {
+            for (int i = 0; i < playerCount; i++) {
+                View playerItemView = containerPlayers.getChildAt(i);
+                TextView textScore = playerItemView.findViewById(R.id.scoreText);
+                EditText playerEditText = playerItemView.findViewById(R.id.playerName);
+
+                // Safeguard to avoid index out of bounds
+                if (i < playerScores.length) {
+                    textScore.setText(String.valueOf(playerScores[i]));
+                    playerEditText.setText(playerNames[i]);
+                }
+            }
+        }
+
+        // Restore the state of the OK buttons
+        for (int i = 0; i < okButtons.size(); i++) {
+            okButtons.get(i).setEnabled(i == currentClickableButtonIndex);
+        }
+    }
+
     private void showPopupLeave() {
         // Inflate the custom dialog layout
         LayoutInflater inflater = getLayoutInflater();
@@ -200,18 +196,13 @@ public class MainActivity2 extends AppCompatActivity {
         Button btnYes = dialogView.findViewById(R.id.btnYes);
         Button btnNo = dialogView.findViewById(R.id.btnNo);
 
-        btnYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                Intent intent = new Intent(MainActivity2.this, MainActivity.class);
-                startActivity(intent);
-            }
+        btnYes.setOnClickListener(v -> {
+            alertDialog.dismiss();
+            Intent intent = new Intent(MainActivity2.this, MainActivity.class);
+            startActivity(intent);
         });
 
-        btnNo.setOnClickListener(v -> {
-            alertDialog.dismiss();
-        });
+        btnNo.setOnClickListener(v -> alertDialog.dismiss());
 
         alertDialog.show();
     }
@@ -234,34 +225,28 @@ public class MainActivity2 extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
 
-        btnRestart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (int i = 0; i < okButtons.size(); i++) {
-                    View parent = (View) okButtons.get(i).getParent();
-                    TextView scoreText = parent.findViewById(R.id.scoreText);
-                    scoreText.setText(getIntent().getStringExtra("regle"));
-                }
-
-                // Disable all OK buttons except the first one
-                for (int i = 0; i < okButtons.size(); i++) {
-                    okButtons.get(i).setEnabled(i == 0);
-                }
-
-                // Reset the current clickable button index
-                currentClickableButtonIndex = 0;
-
-                alertDialog.dismiss();
+        btnRestart.setOnClickListener(v -> {
+            for (int i = 0; i < okButtons.size(); i++) {
+                View parent = (View) okButtons.get(i).getParent();
+                TextView scoreText = parent.findViewById(R.id.scoreText);
+                scoreText.setText(getIntent().getStringExtra("regle"));
             }
+
+            // Disable all OK buttons except the first one
+            for (int i = 0; i < okButtons.size(); i++) {
+                okButtons.get(i).setEnabled(i == 0);
+            }
+
+            // Reset the current clickable button index
+            currentClickableButtonIndex = 0;
+
+            alertDialog.dismiss();
         });
 
-        btnHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                Intent intent = new Intent(MainActivity2.this, MainActivity.class);
-                startActivity(intent);
-            }
+        btnHome.setOnClickListener(v -> {
+            alertDialog.dismiss();
+            Intent intent = new Intent(MainActivity2.this, MainActivity.class);
+            startActivity(intent);
         });
 
         alertDialog.show();
