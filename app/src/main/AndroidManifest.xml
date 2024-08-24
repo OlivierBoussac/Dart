@@ -16,10 +16,10 @@
             android:name=".MenuJouer"
             android:exported="false" />
         <activity
-            android:name=".MainActivity2"
+            android:name=".MenuInGame"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".MainMenu"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
