@@ -3,33 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/whitecasse"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/whitecasse">
 
     <!-- Icone de maison en haut à gauche -->
     <ImageButton
         android:id="@+id/homeIcon"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@drawable/ic_home"
         android:background="?android:attr/selectableItemBackground"
         android:contentDescription="Home"
+        android:onClick="goToMainMenu"
+        android:src="@drawable/ic_home"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:onClick="goToMainMenu" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- TextView centré avec le texte "Match" -->
     <TextView
         android:id="@+id/textViewMatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Match"
-        android:textSize="24sp"
-        android:textColor="@color/black"
         android:layout_marginRight="170dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="Match"
+        android:textColor="@color/black"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@id/homeIcon"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <GridLayout
         android:id="@+id/gridLayoutZone1"
@@ -37,117 +37,106 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:background="@color/text_color_secondary"
+        android:background="@drawable/background_menu_jouer"
         android:columnCount="2"
-        android:rowCount="2"
-        app:layout_constraintTop_toBottomOf="@id/homeIcon"
+        android:rowCount="3"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/homeIcon">
 
         <!-- Bouton Solo -->
         <Button
             android:id="@+id/buttonSolo"
             android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_margin="16dp"
+            android:layout_height="50dp"
             android:layout_columnWeight="1"
+            android:layout_margin="16dp"
             android:background="@drawable/btn_background_menu_jouer"
+            android:elevation="4dp"
             android:text="Solo"
-            app:backgroundTint="@null"
             android:textColor="@color/text_color_primary"
             android:textSize="20sp"
-            android:elevation="4dp" />
+            app:backgroundTint="@null" />
 
         <!-- Bouton Équipe -->
         <Button
             android:id="@+id/buttonEquipe"
             android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_margin="16dp"
+            android:layout_height="50dp"
             android:layout_columnWeight="1"
+            android:layout_margin="16dp"
             android:background="@drawable/btn_background_menu_jouer"
+            android:elevation="4dp"
             android:text="Équipe"
-            app:backgroundTint="@null"
             android:textColor="@color/text_color_primary"
             android:textSize="20sp"
-            android:elevation="4dp" />
+            app:backgroundTint="@null" />
 
-        <!-- Icone de personnage centrée sous les boutons -->
-        <LinearLayout
+        <!-- Conteneur pour les icônes et les TextViews -->
+        <GridLayout
             android:id="@+id/iconContainer"
-            android:orientation="horizontal"
-            android:layout_width="250dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_columnSpan="2"
-            app:layout_constraintTop_toBottomOf="@id/homeIcon"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:columnCount="4"
+            android:rowCount="2"
             app:layout_constraintEnd_toEndOf="parent"
-            android:gravity="center">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/homeIcon">
 
-            <!-- Icône de personnage initial -->
-            <ImageView
-                android:id="@+id/iconPerson"
-                android:layout_width="50dp"
-                android:layout_height="80dp"
-                android:contentDescription="Personnage"
-                android:src="@drawable/ic_person" />
 
-            <!-- Icône d'ajout de personnage -->
-            <ImageView
-                android:id="@+id/iconAddPerson"
-                android:layout_width="50dp"
-                android:layout_height="80dp"
-                android:contentDescription="Ajouter Personnage"
-                android:src="@drawable/ic_add_person"
-                android:layout_marginStart="16dp" />
-
-        </LinearLayout>
+        </GridLayout>
     </GridLayout>
+
 
     <!-- Nouveau GridLayout avec deux TextView -->
     <GridLayout
         android:id="@+id/gridLayoutZone2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginRight="8dp"
+        android:background="@drawable/background_menu_jouer"
         android:columnCount="1"
         android:rowCount="3"
-        android:background="@color/text_color_secondary"
-        app:layout_constraintTop_toBottomOf="@id/gridLayoutZone1"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/gridLayoutZone1">
 
         <!-- Premier TextView -->
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Parametre : "
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            android:gravity="center"
             android:layout_marginLeft="12dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="Paramètres : "
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <!-- Deuxième TextView -->
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Regle : "
-            android:textSize="18sp"
             android:layout_marginLeft="12dp"
+            android:gravity="center"
+            android:text="Type de parties : "
             android:textColor="@color/black"
-            android:gravity="center" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="14dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:columnCount="3"
@@ -158,7 +147,7 @@
             <Button
                 android:id="@+id/button310"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="50dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="2dp"
                 android:background="@drawable/btn_background_menu_jouer"
@@ -171,7 +160,7 @@
             <Button
                 android:id="@+id/button510"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="50dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="2dp"
                 android:background="@drawable/btn_background_menu_jouer"
@@ -184,7 +173,7 @@
             <Button
                 android:id="@+id/buttonPerso"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="50dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="2dp"
                 android:background="@drawable/btn_background_menu_jouer"
@@ -201,13 +190,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="24dp"
             android:layout_marginTop="16dp"
-            android:layout_marginRight="24dp"
             android:layout_marginBottom="8dp"
+            android:alignmentMode="alignMargins"
             android:columnCount="4"
-            android:rowCount="3"
-            android:alignmentMode="alignMargins">
+            android:rowCount="3">
 
             <!-- TextView for Column 1 Header -->
             <TextView
@@ -216,10 +203,11 @@
                 android:layout_height="wrap_content"
                 android:layout_row="0"
                 android:layout_column="1"
+                android:layout_gravity="center"
                 android:layout_margin="8dp"
                 android:gravity="center"
-                android:text="Straight"
-                android:textSize="20dp"
+                android:text="Simple"
+                android:textSize="16dp"
                 android:textStyle="bold" />
 
             <!-- TextView for Column 2 Header -->
@@ -229,11 +217,12 @@
                 android:layout_height="wrap_content"
                 android:layout_row="0"
                 android:layout_column="2"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
                 android:gravity="center"
                 android:text="Double"
-                android:layout_margin="8dp"
-                android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:textSize="16dp"
+                android:textStyle="bold" />
 
             <!-- TextView for Column 3 Header -->
             <TextView
@@ -242,11 +231,12 @@
                 android:layout_height="wrap_content"
                 android:layout_row="0"
                 android:layout_column="3"
-                android:gravity="center"
-                android:text="Master"
+                android:layout_gravity="center"
                 android:layout_margin="8dp"
-                android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:gravity="center"
+                android:text="Double ou triple"
+                android:textSize="16dp"
+                android:textStyle="bold" />
             <!-- First Row Header -->
             <TextView
                 android:id="@+id/textRow1"
@@ -254,37 +244,45 @@
                 android:layout_height="wrap_content"
                 android:layout_row="1"
                 android:layout_column="0"
-                android:gravity="center"
-                android:text="In"
+                android:layout_gravity="center"
                 android:layout_margin="8dp"
-                android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:gravity="center"
+                android:text="Debut"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:buttonTint="@color/grey" />
 
             <!-- CheckBox in Row 1, Column 1 -->
             <CheckBox
-                android:id="@+id/checkBox0"
+                android:id="@+id/checkBoxDebutSimple"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_row="1"
                 android:layout_column="1"
-                android:layout_margin="8dp"/>
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:buttonTint="@color/grey" />
 
             <!-- CheckBox in Row 1, Column 2 -->
             <CheckBox
-                android:id="@+id/checkBox1"
+                android:id="@+id/checkBoxDebutDouble"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_row="1"
                 android:layout_column="2"
-                android:layout_margin="8dp"/>
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:buttonTint="@color/grey" />
 
             <CheckBox
-                android:id="@+id/checkBox5"
+                android:id="@+id/checkBoxDebutMaster"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_row="1"
                 android:layout_column="3"
-                android:layout_margin="8dp"/>
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:buttonTint="@color/grey" />
 
             <!-- Second Row Header -->
             <TextView
@@ -293,38 +291,45 @@
                 android:layout_height="wrap_content"
                 android:layout_row="2"
                 android:layout_column="0"
-                android:gravity="center"
-                android:text="Out"
+                android:layout_gravity="center"
                 android:layout_margin="8dp"
-                android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:gravity="center"
+                android:text="Fin"
+                android:textSize="16dp"
+                android:textStyle="bold" />
 
             <!-- CheckBox in Row 2, Column 1 -->
             <CheckBox
-                android:id="@+id/checkBox2"
+                android:id="@+id/checkBoxFinSimple"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_row="2"
                 android:layout_column="1"
-                android:layout_margin="8dp"/>
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:buttonTint="@color/grey" />
 
             <!-- CheckBox in Row 2, Column 2 -->
             <CheckBox
-                android:id="@+id/checkBox3"
+                android:id="@+id/checkBoxFinDouble"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_row="2"
                 android:layout_column="2"
-                android:layout_margin="8dp"/>
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:buttonTint="@color/grey" />
 
             <!-- CheckBox in Row 2, Column 3 -->
             <CheckBox
-                android:id="@+id/checkBox4"
+                android:id="@+id/checkBoxFinMaster"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_row="2"
                 android:layout_column="3"
-                android:layout_margin="8dp"/>
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:buttonTint="@color/grey" />
 
         </GridLayout>
 
@@ -334,15 +339,18 @@
     <!-- Bouton "Start" centré en bas -->
     <Button
         android:id="@+id/startButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        app:backgroundTint="@null"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:layout_marginBottom="80dp"
         android:background="@drawable/btn_background_menu_jouer"
+        android:text="Start"
+        android:textSize="20sp"
+        app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="80dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Bottom bar avec deux boutons : Accueil et Statistique -->
     <LinearLayout
@@ -354,7 +362,7 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" >
+        app:layout_constraintStart_toStartOf="parent">
 
         <!-- Bouton Accueil -->
         <Button
