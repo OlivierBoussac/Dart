@@ -18,7 +18,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.dart.R;
+import com.example.dart.object.Joueur;
 import com.example.dart.object.ParamGame;
+
+import java.util.ArrayList;
 
 public class MenuJouer extends AppCompatActivity {
 
@@ -35,6 +38,8 @@ public class MenuJouer extends AppCompatActivity {
     private CheckBox checkBoxFinMaster;
 
     private ParamGame paramGame;
+
+    private ArrayList<Joueur> joueur;
 
     private GridLayout iconContainer;
     private ImageView iconAddPerson;
@@ -57,6 +62,8 @@ public class MenuJouer extends AppCompatActivity {
         checkBoxFinSimple = findViewById(R.id.checkBoxFinSimple);
         checkBoxFinDouble = findViewById(R.id.checkBoxFinDouble);
         checkBoxFinMaster = findViewById(R.id.checkBoxFinMaster);
+
+        paramGame = new ParamGame();
 
         // Initialiser le conteneur d'icônes (GridLayout) et le bouton d'ajout de joueur
         iconContainer = findViewById(R.id.iconContainer);
@@ -96,6 +103,7 @@ public class MenuJouer extends AppCompatActivity {
             public void onClick(View v) {
                 buttonSolo.setSelected(true);
                 buttonEquipe.setSelected(false);
+                paramGame.setEquipe(false);
             }
         });
 
@@ -104,6 +112,7 @@ public class MenuJouer extends AppCompatActivity {
             public void onClick(View v) {
                 buttonSolo.setSelected(false);
                 buttonEquipe.setSelected(true);
+                paramGame.setEquipe(true);
             }
         });
 
@@ -113,6 +122,7 @@ public class MenuJouer extends AppCompatActivity {
                 button310.setSelected(true);
                 button510.setSelected(false);
                 buttonPerso.setSelected(false);
+                paramGame.setScore(310);
             }
         });
 
@@ -122,6 +132,7 @@ public class MenuJouer extends AppCompatActivity {
                 button310.setSelected(false);
                 button510.setSelected(true);
                 buttonPerso.setSelected(false);
+                paramGame.setScore(510);
             }
         });
 
@@ -131,6 +142,8 @@ public class MenuJouer extends AppCompatActivity {
                 button310.setSelected(false);
                 button510.setSelected(false);
                 buttonPerso.setSelected(true);
+
+                showCustomDialog();
             }
         });
 
@@ -140,6 +153,7 @@ public class MenuJouer extends AppCompatActivity {
                 checkBoxDebutSimple.setChecked(true);
                 checkBoxDebutDouble.setChecked(false);
                 checkBoxDebutMaster.setChecked(false);
+                paramGame.setDebut("Simple");
             }
         });
 
@@ -149,6 +163,7 @@ public class MenuJouer extends AppCompatActivity {
                 checkBoxDebutSimple.setChecked(false);
                 checkBoxDebutDouble.setChecked(true);
                 checkBoxDebutMaster.setChecked(false);
+                paramGame.setDebut("Double");
             }
         });
 
@@ -158,6 +173,7 @@ public class MenuJouer extends AppCompatActivity {
                 checkBoxDebutSimple.setChecked(false);
                 checkBoxDebutDouble.setChecked(false);
                 checkBoxDebutMaster.setChecked(true);
+                paramGame.setDebut("Master");
             }
         });
 
@@ -167,6 +183,7 @@ public class MenuJouer extends AppCompatActivity {
                 checkBoxFinSimple.setChecked(true);
                 checkBoxFinDouble.setChecked(false);
                 checkBoxFinMaster.setChecked(false);
+                paramGame.setFin("Simple");
             }
         });
 
@@ -176,6 +193,7 @@ public class MenuJouer extends AppCompatActivity {
                 checkBoxFinSimple.setChecked(false);
                 checkBoxFinDouble.setChecked(true);
                 checkBoxFinMaster.setChecked(false);
+                paramGame.setFin("Double");
             }
         });
 
@@ -185,8 +203,48 @@ public class MenuJouer extends AppCompatActivity {
                 checkBoxFinSimple.setChecked(false);
                 checkBoxFinDouble.setChecked(false);
                 checkBoxFinMaster.setChecked(true);
+                paramGame.setFin("Master");
             }
         });
+    }
+
+    private void showCustomDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MenuJouer.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_perso_score, null);
+        builder.setView(dialogView);
+
+        // Références aux vues du dialog
+        EditText etScoreInput = dialogView.findViewById(R.id.etScoreInput);
+        Button btnValid = dialogView.findViewById(R.id.btnValide);
+        Button btnCancel = dialogView.findViewById(R.id.btnRetour);
+
+        AlertDialog alertDialog = builder.create();
+
+        btnValid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String scoreInput = etScoreInput.getText().toString().trim();
+
+                if (!TextUtils.isEmpty(scoreInput)) {
+                    // Traitez le score saisi (par exemple, en l'enregistrant dans une variable ou un objet)
+                    Toast.makeText(MenuJouer.this, "Score sélectionné : " + scoreInput, Toast.LENGTH_SHORT).show();
+                    paramGame.setScore(Integer.parseInt(scoreInput));
+                    alertDialog.dismiss();
+                } else {
+                    Toast.makeText(MenuJouer.this, "Veuillez entrer un score", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 
     // Méthode pour ajouter un joueur par défaut nommé "Joueur 1"
@@ -243,6 +301,11 @@ public class MenuJouer extends AppCompatActivity {
 
                 if (!TextUtils.isEmpty(playerName)) {
                     addPlayerIconToGrid(playerName);
+
+                    joueur.add(new Joueur(playerName));
+
+                    paramGame.setJoueur(joueur);
+
                     alertDialog.dismiss();
                 } else {
                     Toast.makeText(MenuJouer.this, "Veuillez entrer un nom", Toast.LENGTH_SHORT).show();
