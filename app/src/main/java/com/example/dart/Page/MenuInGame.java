@@ -3,6 +3,7 @@ package com.example.dart.Page;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.dart.R;
+import com.example.dart.object.ParamGame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +36,7 @@ public class MenuInGame extends AppCompatActivity {
         setContentView(R.layout.activity_menu_in_game);
 
         // Retrieve the number of players and the selected rule from the intent
-        int numberOfPlayers = getIntent().getIntExtra("numberOfPlayers", 0);
-        String regleSelect = getIntent().getStringExtra("regle");
+        ParamGame paramGame = (ParamGame) getIntent().getSerializableExtra("paramGame");//        String regleSelect = getIntent().getStringExtra("regle");
 
         // Find the LinearLayout container for players
         LinearLayout containerPlayers = findViewById(R.id.containerPlayers);
@@ -52,7 +53,7 @@ public class MenuInGame extends AppCompatActivity {
         int marginInPx = (int) (marginInDp * scale + 0.5f);
 
         // Dynamically add views for each player
-        for (int i = 1; i <= numberOfPlayers; i++) {
+        for (int i = 1; i <= paramGame.getJoueur().size(); i++) {
             // Inflate the player item layout
             LayoutInflater inflater = LayoutInflater.from(this);
             View playerItemView = inflater.inflate(R.layout.player_item, containerPlayers, false);
@@ -63,7 +64,7 @@ public class MenuInGame extends AppCompatActivity {
 
             // Find and set up the 301 TextView
             TextView textScore = playerItemView.findViewById(R.id.scoreText);
-            textScore.setText(regleSelect);
+            textScore.setText(paramGame.getScore());
 
             // Find and set up the EditText for score input
             EditText editText = playerItemView.findViewById(R.id.valueInput);

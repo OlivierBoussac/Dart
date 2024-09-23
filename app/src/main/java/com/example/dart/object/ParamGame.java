@@ -1,8 +1,9 @@
 package com.example.dart.object;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ParamGame {
+public class ParamGame implements Serializable {
     private boolean equipe;
     private ArrayList<Joueur> joueur;
     private int score;

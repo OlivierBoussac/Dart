@@ -1,7 +1,9 @@
 package com.example.dart.Page;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.example.dart.object.Joueur;
 import com.example.dart.object.ParamGame;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MenuJouer extends AppCompatActivity {
 
@@ -36,10 +39,11 @@ public class MenuJouer extends AppCompatActivity {
     private CheckBox checkBoxFinSimple;
     private CheckBox checkBoxFinDouble;
     private CheckBox checkBoxFinMaster;
+    private Button buttonStart;
 
     private ParamGame paramGame;
 
-    private ArrayList<Joueur> joueur;
+    private ArrayList<Joueur> joueur = new ArrayList<>();
 
     private GridLayout iconContainer;
     private ImageView iconAddPerson;
@@ -62,6 +66,7 @@ public class MenuJouer extends AppCompatActivity {
         checkBoxFinSimple = findViewById(R.id.checkBoxFinSimple);
         checkBoxFinDouble = findViewById(R.id.checkBoxFinDouble);
         checkBoxFinMaster = findViewById(R.id.checkBoxFinMaster);
+        buttonStart = findViewById(R.id.startButton);
 
         paramGame = new ParamGame();
 
@@ -86,6 +91,8 @@ public class MenuJouer extends AppCompatActivity {
 
         // Ajouter automatiquement un joueur nommé "Joueur 1"
         addDefaultPlayer();
+
+        joueur.add(new Joueur("Joueur 1", playerCount));
 
         iconAddPerson.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,6 +213,19 @@ public class MenuJouer extends AppCompatActivity {
                 paramGame.setFin("Master");
             }
         });
+
+        buttonStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                paramGame.setJoueur(joueur);
+
+                // Démarre l'activité MenuJouer
+                Intent intent = new Intent(MenuJouer.this, MenuInGame.class);
+                intent.putExtra("paramGame", paramGame);
+                startActivity(intent);
+            }
+        });
     }
 
     private void showCustomDialog() {
@@ -286,6 +306,7 @@ public class MenuJouer extends AppCompatActivity {
         EditText editTextPlayerName = dialogView.findViewById(R.id.etPlayerName);
         Button btnCancel = dialogView.findViewById(R.id.btnCancel);
         Button btnSave = dialogView.findViewById(R.id.btnOK);
+        Button btnDelete = dialogView.findViewById(R.id.btnDelete);
 
         // Si un nom initial est fourni, le définir dans le champ d'édition
         if (!TextUtils.isEmpty(initialPlayerName)) {
@@ -302,9 +323,7 @@ public class MenuJouer extends AppCompatActivity {
                 if (!TextUtils.isEmpty(playerName)) {
                     addPlayerIconToGrid(playerName);
 
-                    joueur.add(new Joueur(playerName));
-
-                    paramGame.setJoueur(joueur);
+                    joueur.add(new Joueur(playerName, playerCount));
 
                     alertDialog.dismiss();
                 } else {
@@ -314,6 +333,13 @@ public class MenuJouer extends AppCompatActivity {
         });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
@@ -404,9 +430,15 @@ public class MenuJouer extends AppCompatActivity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                String PlayerName = editTextPlayerName.getText().toString().trim();
+
                 iconContainer.removeView(playerLayout);
                 playerCount--;
                 reorganizePlayerIcons();
+
+                removeJoueurByName(joueur, PlayerName);
+
                 alertDialog.dismiss();
             }
         });
@@ -432,6 +464,16 @@ public class MenuJouer extends AppCompatActivity {
             layoutParams.rowSpec = GridLayout.spec(i / columnCount);
             layoutParams.columnSpec = GridLayout.spec(i % columnCount);
             child.setLayoutParams(layoutParams);
+        }
+    }
+
+    public static void removeJoueurByName(ArrayList<Joueur> joueurs, String name) {
+        Iterator<Joueur> iterator = joueurs.iterator();
+        while (iterator.hasNext()) {
+            Joueur joueur = iterator.next();
+            if (joueur.getName().equals(name)) {
+                iterator.remove();  // Suppression du joueur
+            }
         }
     }
 }
