@@ -23,10 +23,11 @@ import com.example.dart.object.ParamGame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class MenuInGame extends AppCompatActivity {
 
-    private Button button0, button1, button2, button3, button4, button5, button6, button7, button8, button9, buttonSend;
+    private Button button0, button1, button2, button3, button4, button5, button6, button7, button8, button9, buttonSend, buttonBack;
     private ImageButton buttonHome;
     private TextView textViewScore;
     private String ScoreInput = "";
@@ -40,6 +41,9 @@ public class MenuInGame extends AppCompatActivity {
     private TextView currentPlayer, currentScore, Player1, Score1, Player2, Score2, Player3, Score3;
 
     private int playerToStart = 0;
+
+    // Stack to keep track of previous scores for undo functionality
+    private Stack<ScoreState> previousScores = new Stack<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,14 @@ public class MenuInGame extends AppCompatActivity {
             }
         });
 
+        // Add OnClickListener for undo button
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                undoLastScore();
+            }
+        });
+
         textViewScore.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -96,7 +108,7 @@ public class MenuInGame extends AppCompatActivity {
         });
     }
 
-    private void initialize(){
+    private void initialize() {
         button0 = findViewById(R.id.button0);
         button1 = findViewById(R.id.button1);
         button2 = findViewById(R.id.button2);
@@ -109,6 +121,7 @@ public class MenuInGame extends AppCompatActivity {
         button9 = findViewById(R.id.button9);
 
         buttonSend = findViewById(R.id.buttonSend);
+        buttonBack = findViewById(R.id.buttonBack); // Ensure buttonBack is defined in XML
 
         textViewScore = findViewById(R.id.textViewScore);
 
@@ -125,8 +138,6 @@ public class MenuInGame extends AppCompatActivity {
         Score2 = findViewById(R.id.textViewScore2);
         Player3 = findViewById(R.id.textViewPlayer3);
         Score3 = findViewById(R.id.textViewScore3);
-
-
     }
 
     private void setButtonListeners() {
@@ -162,7 +173,7 @@ public class MenuInGame extends AppCompatActivity {
         if (paramGame.getJoueur().size() >= 2) {
             Player1.setText(paramGame.getJoueur().get(1).getName());
             Score1.setText(String.valueOf(scoreList.get(1)));
-        }else {
+        } else {
             Player1.setText("");
             Score1.setText("");
         }
@@ -170,7 +181,7 @@ public class MenuInGame extends AppCompatActivity {
         if (paramGame.getJoueur().size() >= 3) {
             Player2.setText(paramGame.getJoueur().get(2).getName());
             Score2.setText(String.valueOf(scoreList.get(2)));
-        }else {
+        } else {
             Player2.setText("");
             Score2.setText("");
         }
@@ -178,7 +189,7 @@ public class MenuInGame extends AppCompatActivity {
         if (paramGame.getJoueur().size() >= 4) {
             Player3.setText(paramGame.getJoueur().get(3).getName());
             Score3.setText(String.valueOf(scoreList.get(3)));
-        }else {
+        } else {
             Player3.setText("");
             Score3.setText("");
         }
@@ -219,6 +230,9 @@ public class MenuInGame extends AppCompatActivity {
                 return;
             }
 
+            // Save current state before modifying the score
+            previousScores.push(new ScoreState(currentPlayerToModify, scoreList.get(currentPlayerToModify)));
+
             scoreList.set(currentPlayerToModify, scoreList.get(currentPlayerToModify) - enteredScore);
 
             rollOfPlayer();
@@ -229,8 +243,7 @@ public class MenuInGame extends AppCompatActivity {
     }
 
     private void rollOfPlayer() {
-
-        if(scoreList.get(currentPlayerToModify) == 0){
+        if (scoreList.get(currentPlayerToModify) == 0) {
             showPopupWin();
         }
 
@@ -275,6 +288,17 @@ public class MenuInGame extends AppCompatActivity {
         textViewScore.setText(ScoreInput);
     }
 
+    private void undoLastScore() {
+        if (!previousScores.isEmpty()) {
+            ScoreState lastScoreState = previousScores.pop();
+            scoreList.set(lastScoreState.playerIndex, lastScoreState.score);
+            currentPlayerToModify = lastScoreState.playerIndex;
+            updatePlayerDisplay();
+        } else {
+            Toast.makeText(MenuInGame.this, "Aucun score à annuler", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void showPopupWin() {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_winner, null);
@@ -317,6 +341,7 @@ public class MenuInGame extends AppCompatActivity {
         }
 
         updatePlayerDisplay();
+        previousScores.clear(); // Clear the undo stack when restarting
     }
 
     private void showPopupLeave() {
@@ -340,5 +365,16 @@ public class MenuInGame extends AppCompatActivity {
         btnNo.setOnClickListener(v -> alertDialog.dismiss());
 
         alertDialog.show();
+    }
+
+    // Helper class to save score state for undo functionality
+    private static class ScoreState {
+        int playerIndex;
+        int score;
+
+        ScoreState(int playerIndex, int score) {
+            this.playerIndex = playerIndex;
+            this.score = score;
+        }
     }
 }
