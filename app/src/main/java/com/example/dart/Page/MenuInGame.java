@@ -2,27 +2,22 @@ package com.example.dart.Page;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.pm.ActivityInfo;
 import com.example.dart.R;
 import com.example.dart.object.ParamGame;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 public class MenuInGame extends AppCompatActivity {
@@ -42,13 +37,13 @@ public class MenuInGame extends AppCompatActivity {
 
     private int playerToStart = 0;
 
-    // Stack to keep track of previous scores for undo functionality
     private Stack<ScoreState> previousScores = new Stack<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_in_game);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         initialize();
 
@@ -58,12 +53,18 @@ public class MenuInGame extends AppCompatActivity {
 
         setButtonListeners();
 
+        textViewScore.setText("");
+        icDelete.setVisibility(View.GONE);
+
         icDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ScoreInput.length() > 0) {
                     ScoreInput = ScoreInput.substring(0, ScoreInput.length() - 1);
                     textViewScore.setText(ScoreInput);
+                }
+                if (ScoreInput.length() == 0) {
+                    icDelete.setVisibility(View.GONE);
                 }
             }
         });
@@ -145,6 +146,7 @@ public class MenuInGame extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Button clickedButton = (Button) v;
+                icDelete.setVisibility(View.VISIBLE);
                 ScoreInput += clickedButton.getText().toString();
                 textViewScore.setText(ScoreInput);
             }
@@ -257,6 +259,9 @@ public class MenuInGame extends AppCompatActivity {
     }
 
     private void updatePlayerDisplay() {
+
+        icDelete.setVisibility(View.GONE);
+
         currentPlayer.setText(paramGame.getJoueur().get(currentPlayerToModify).getName());
         currentScore.setText(String.valueOf(scoreList.get(currentPlayerToModify)));
 

@@ -3,7 +3,7 @@ package com.example.dart.Page;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
+import android.content.pm.ActivityInfo;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +54,7 @@ public class MenuJouer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_jouer);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         buttonSolo = findViewById(R.id.buttonSolo);
         buttonEquipe = findViewById(R.id.buttonEquipe);
@@ -309,7 +310,6 @@ public class MenuJouer extends AppCompatActivity {
         builder.setView(dialogView);
 
         EditText editTextPlayerName = dialogView.findViewById(R.id.etPlayerName);
-        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
         Button btnSave = dialogView.findViewById(R.id.btnOK);
         Button btnDelete = dialogView.findViewById(R.id.btnDelete);
 
@@ -337,12 +337,6 @@ public class MenuJouer extends AppCompatActivity {
             }
         });
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
 
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -409,7 +403,6 @@ public class MenuJouer extends AppCompatActivity {
         builder.setView(dialogView);
 
         EditText editTextPlayerName = dialogView.findViewById(R.id.etPlayerName);
-        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
         Button btnSave = dialogView.findViewById(R.id.btnOK);
         Button btnDelete = dialogView.findViewById(R.id.btnDelete); // Nouveau bouton pour supprimer le joueur
 
@@ -444,13 +437,6 @@ public class MenuJouer extends AppCompatActivity {
 
                 removeJoueurByName(joueur, PlayerName);
 
-                alertDialog.dismiss();
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 alertDialog.dismiss();
             }
         });
