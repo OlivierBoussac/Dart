@@ -1,32 +1,388 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linearLayoutPlayers"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background_color_main2"
-    android:padding="16dp">
+    android:background="@android:color/darker_gray">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:id="@+id/containerPlayers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"/>
-    </ScrollView>
-
-    <!-- Home Button -->
-    <Button
+    <!-- Icône Home en haut à gauche -->
+    <ImageButton
         android:id="@+id/buttonHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:backgroundTint="@color/button_brown"
-        android:textSize="30sp"
-        android:text="Home"
-        android:layout_marginTop="24dp"/>
-</LinearLayout>
+        android:src="@drawable/ic_home"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:contentDescription="Revenir au menu"
+        android:background="@android:color/transparent"
+        android:padding="16dp"/>
+
+    <!-- LinearLayout pour le reste du contenu -->
+    <LinearLayout
+        android:id="@+id/linearLayoutPlayers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/black"
+        android:layout_below="@id/buttonHome">
+
+        <LinearLayout
+            android:id="@+id/upperSection"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.2"
+            android:orientation="horizontal"
+            android:background="@color/player_selected">
+
+            <!-- Partie gauche pour afficher le joueur actuel -->
+            <LinearLayout
+                android:id="@+id/layoutLeft"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@color/player_selected">
+
+                <!-- Nom du joueur au centre -->
+                <TextView
+                    android:id="@+id/textViewCurrentPlayer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Joueur Actuel"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"/>
+
+                <!-- Score du joueur en dessous du nom, centré également -->
+                <TextView
+                    android:id="@+id/textViewCurrentScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="501"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="48sp"/>
+
+            </LinearLayout>
+
+            <!-- Partie droite pour afficher les autres joueurs, divisée en 3 lignes -->
+            <LinearLayout
+                android:id="@+id/layoutRight"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@android:color/darker_gray">
+
+                <!-- Première ligne -->
+                <LinearLayout
+                    android:id="@+id/player1Layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <!-- Nom du joueur au centre -->
+                    <TextView
+                        android:id="@+id/textViewPlayer1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Joueur 1"
+                        android:gravity="center"
+                        android:layout_marginRight="16dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"/>
+
+                    <!-- Score du joueur en dessous du nom, centré également -->
+                    <TextView
+                        android:id="@+id/textViewScore1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="501"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="24sp"/>
+
+                </LinearLayout>
+
+                <!-- Deuxième ligne -->
+                <LinearLayout
+                    android:id="@+id/player2Layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <!-- Nom du joueur au centre -->
+                    <TextView
+                        android:id="@+id/textViewPlayer2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="16dp"
+                        android:text="Joueur 2"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"/>
+
+                    <!-- Score du joueur en dessous du nom, centré également -->
+                    <TextView
+                        android:id="@+id/textViewScore2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="501"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="24sp"/>
+
+                </LinearLayout>
+
+                <!-- Troisième ligne -->
+                <LinearLayout
+                    android:id="@+id/player3Layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <!-- Nom du joueur au centre -->
+                    <TextView
+                        android:id="@+id/textViewPlayer3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Joueur 3"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:layout_marginRight="16dp"
+                        android:textSize="16sp"/>
+
+                    <!-- Score du joueur en dessous du nom, centré également -->
+                    <TextView
+                        android:id="@+id/textViewScore3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="501"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="24sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Partie inférieure (2/3 de la hauteur totale) -->
+        <LinearLayout
+            android:id="@+id/lowerSection"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <!-- Afficheur du score et bouton envoyer (1ère ligne) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:orientation="horizontal">
+
+                <!-- Afficheur de score -->
+                <TextView
+                    android:id="@+id/textViewScore"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:background="@android:color/white"
+                    android:gravity="center_vertical"
+                    android:text="Score"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:drawablePadding="8dp"/>
+
+                <!-- Icône cliquable (ImageView) -->
+                <ImageView
+                    android:id="@+id/icDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:layout_gravity="center_vertical"
+                    android:padding="20dp"
+                    android:src="@drawable/ic_fleche"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <!-- Bouton envoyer -->
+                <Button
+                    android:id="@+id/buttonSend"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:text="Envoyer"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null" />
+            </LinearLayout>
+
+            <!-- GridLayout avec 4 lignes et 3 colonnes pour le pad numérique -->
+            <GridLayout
+                android:id="@+id/gridLayout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:rowCount="4"
+                android:columnCount="3"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+                <!-- Première ligne : 1, 2, 3 -->
+                <Button
+                    android:id="@+id/button1"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text="2"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null"/>
+
+                <Button
+                    android:id="@+id/button3"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text="3"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null" />
+
+                <!-- Deuxième ligne : 4, 5, 6 -->
+                <Button
+                    android:id="@+id/button4"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text="4"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null" />
+
+                <Button
+                    android:id="@+id/button5"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text="5"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null" />
+
+                <Button
+                    android:id="@+id/button6"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text="6"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null" />
+
+                <!-- Troisième ligne : 7, 8, 9 -->
+                <Button
+                    android:id="@+id/button7"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text="7"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null" />
+
+                <Button
+                    android:id="@+id/button8"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text="8"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null" />
+
+                <Button
+                    android:id="@+id/button9"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text="9"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null" />
+
+                <!-- Quatrième ligne : bouton retour, 0, vide -->
+                <Button
+                    android:id="@+id/buttonBack"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text=""
+                    android:gravity="center"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null"
+                    android:drawableLeft="@android:drawable/ic_menu_revert" />
+
+                <Button
+                    android:id="@+id/button0"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    android:text="0"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:background="@drawable/btn_background_pad"
+                    app:backgroundTint="@null" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1" />
+
+            </GridLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

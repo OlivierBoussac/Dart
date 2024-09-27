@@ -94,6 +94,11 @@ public class MenuJouer extends AppCompatActivity {
 
         joueur.add(new Joueur("Joueur 1", playerCount));
 
+        paramGame.setScore(301);
+        paramGame.setDebut("Simple");
+        paramGame.setFin("Simple");
+        paramGame.setEquipe(false);
+
         iconAddPerson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
