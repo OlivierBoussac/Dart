@@ -135,7 +135,7 @@ public class MenuJouer extends AppCompatActivity {
                 button310.setSelected(true);
                 button510.setSelected(false);
                 buttonPerso.setSelected(false);
-                paramGame.setScore(310);
+                paramGame.setScore(301);
             }
         });
 
@@ -145,7 +145,7 @@ public class MenuJouer extends AppCompatActivity {
                 button310.setSelected(false);
                 button510.setSelected(true);
                 buttonPerso.setSelected(false);
-                paramGame.setScore(510);
+                paramGame.setScore(501);
             }
         });
 
@@ -406,6 +406,9 @@ public class MenuJouer extends AppCompatActivity {
         Button btnSave = dialogView.findViewById(R.id.btnOK);
         Button btnDelete = dialogView.findViewById(R.id.btnDelete); // Nouveau bouton pour supprimer le joueur
 
+
+        String oldPlayerName = playerNameTextView.getText().toString().trim();
+
         // Remplir le champ d'édition avec le nom actuel du joueur
         editTextPlayerName.setText(playerNameTextView.getText().toString().trim());
 
@@ -418,6 +421,7 @@ public class MenuJouer extends AppCompatActivity {
 
                 if (!TextUtils.isEmpty(newPlayerName)) {
                     playerNameTextView.setText(newPlayerName);
+                    updateJoueurName(joueur, oldPlayerName, newPlayerName);
                     alertDialog.dismiss();
                 } else {
                     Toast.makeText(MenuJouer.this, "Veuillez entrer un nom", Toast.LENGTH_SHORT).show();
@@ -442,6 +446,15 @@ public class MenuJouer extends AppCompatActivity {
         });
 
         alertDialog.show();
+    }
+
+    private void updateJoueurName(ArrayList<Joueur> joueurs, String oldName, String newName) {
+        for (Joueur joueur : joueurs) {
+            if (joueur.getName().equals(oldName)) {
+                joueur.setName(newName);
+                break;
+            }
+        }
     }
 
     // Méthode pour réorganiser les icônes des joueurs dans le GridLayout
