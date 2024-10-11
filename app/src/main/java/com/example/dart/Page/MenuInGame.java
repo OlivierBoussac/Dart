@@ -3,6 +3,7 @@ package com.example.dart.Page;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +19,7 @@ import com.example.dart.R;
 import com.example.dart.object.ParamGame;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Stack;
 
 public class MenuInGame extends AppCompatActivity {
@@ -52,6 +54,8 @@ public class MenuInGame extends AppCompatActivity {
         startGameLoadData();
 
         setButtonListeners();
+
+        showRulesGame();
 
         textViewScore.setText("");
         icDelete.setVisibility(View.GONE);
@@ -107,6 +111,43 @@ public class MenuInGame extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void showRulesGame () {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_type_game, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+
+        AlertDialog alertDialog = builder.create();
+
+        Button btnOK = dialogView.findViewById(R.id.btnOk);
+        TextView tvMessage = dialogView.findViewById(R.id.tvMessage);
+
+        if (Objects.equals(paramGame.getDebut(), "Double") && Objects.equals(paramGame.getFin(), "Simple")) {
+            tvMessage.setText("RAPPEL : Vous etes en Double Vous devrez donc faire un Double en premier coup");
+        }
+        else if (Objects.equals(paramGame.getDebut(), "Master") && Objects.equals(paramGame.getFin(), "Simple")) {
+            tvMessage.setText("RAPPEL : Vous etes en Master Vous devrez donc faire un Double ou un triple en premier coup");
+        }
+        else if (Objects.equals(paramGame.getDebut(), "Double") && Objects.equals(paramGame.getFin(), "Double")) {
+            tvMessage.setText("RAPPEL : Vous etes en Double Vous devrez donc faire un Double en premier et dernier coup");
+        }
+        else if (Objects.equals(paramGame.getDebut(), "Double") && Objects.equals(paramGame.getFin(), "Master")) {
+            tvMessage.setText("RAPPEL : Vous etes en Master Vous devrez donc faire un Double en premier coup et un double ou un triple en dernier coup");
+        }
+        else if (Objects.equals(paramGame.getDebut(), "Master") && Objects.equals(paramGame.getFin(), "Double")) {
+            tvMessage.setText("RAPPEL : Vous etes en Master Vous devrez donc faire un Double ou un triple en premier coup et un double en dernier coup");
+        }
+        else if (Objects.equals(paramGame.getDebut(), "Master") && Objects.equals(paramGame.getFin(), "Master")) {
+            tvMessage.setText("RAPPEL : Vous etes en Master Vous devrez donc faire un Double ou un triple en premier coup et en dernier coup");
+        }
+
+        btnOK.setOnClickListener(v -> {
+            alertDialog.dismiss();
+        });
+        alertDialog.show();
     }
 
     private void initialize() {
@@ -232,10 +273,14 @@ public class MenuInGame extends AppCompatActivity {
                 return;
             }
 
-            // Save current state before modifying the score
-            previousScores.push(new ScoreState(currentPlayerToModify, scoreList.get(currentPlayerToModify)));
-
-            scoreList.set(currentPlayerToModify, scoreList.get(currentPlayerToModify) - enteredScore);
+            if ((scoreList.get(currentPlayerToModify) - enteredScore) >= 0) {
+                // Save current state before modifying the score
+                previousScores.push(new ScoreState(currentPlayerToModify, scoreList.get(currentPlayerToModify)));
+                scoreList.set(currentPlayerToModify, scoreList.get(currentPlayerToModify) - enteredScore);
+            }else {
+                previousScores.push(new ScoreState(currentPlayerToModify, scoreList.get(currentPlayerToModify)));
+                Toast.makeText(MenuInGame.this, "Le score totale ne peut être inférieur à 0", Toast.LENGTH_SHORT).show();
+            }
 
             rollOfPlayer();
 
@@ -358,7 +403,7 @@ public class MenuInGame extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
 
-        Button btnYes = dialogView.findViewById(R.id.btnYes);
+        Button btnYes = dialogView.findViewById(R.id.btnOk);
         Button btnNo = dialogView.findViewById(R.id.btnNo);
 
         btnYes.setOnClickListener(v -> {
