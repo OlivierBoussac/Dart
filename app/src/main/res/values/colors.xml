@@ -30,4 +30,9 @@
     <color name="color_selected">#5A7380</color>
     <color name="player_selected">#7B9CAD</color>
 
+
+    <color name="lighter_gray">#aaa</color>
+    <color name="darker_gray">#878787</color>
+
+
 </resources>
