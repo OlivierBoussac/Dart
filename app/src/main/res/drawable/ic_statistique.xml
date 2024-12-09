@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Barre 1 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M4,14h3v5h-3z"/>
+
+    <!-- Barre 2 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M8,10h3v9h-3z"/>
+
+    <!-- Barre 3 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M12,6h3v13h-3z"/>
+
+    <!-- Barre 4 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M16,4h3v15h-3z"/>
+
+    <!-- Ligne de base -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M2,20h19v2.5h-19z"/>
+</vector>

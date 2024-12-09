@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,6 +42,8 @@ public class MenuJouer extends AppCompatActivity {
     private CheckBox checkBoxFinMaster;
     private Button buttonStart;
 
+    private ImageButton buttonHome;
+
     private ParamGame paramGame;
 
     private ArrayList<Joueur> joueur = new ArrayList<>();
@@ -68,6 +71,7 @@ public class MenuJouer extends AppCompatActivity {
         checkBoxFinDouble = findViewById(R.id.checkBoxFinDouble);
         checkBoxFinMaster = findViewById(R.id.checkBoxFinMaster);
         buttonStart = findViewById(R.id.startButton);
+        buttonHome = findViewById(R.id.homeIcon);
 
         paramGame = new ParamGame();
 
@@ -108,6 +112,14 @@ public class MenuJouer extends AppCompatActivity {
                 } else {
                     Toast.makeText(MenuJouer.this, "Maximum de joueurs atteint", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        buttonHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuJouer.this, MainMenu.class);
+                startActivity(intent);
             }
         });
 

@@ -3,12 +3,13 @@ package com.example.dart.Page;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,16 +17,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.pm.ActivityInfo;
 import com.example.dart.R;
+import com.example.dart.object.Joueur;
 import com.example.dart.object.ParamGame;
+import com.example.dart.object.StatistiqueInGame;
+import com.example.dart.repository.DBHandler;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 
 public class MenuInGame extends AppCompatActivity {
 
-    private Button button0, button1, button2, button3, button4, button5, button6, button7, button8, button9, buttonSend, buttonBack;
-    private ImageButton buttonHome;
+    private Button button0, button1,button2, button3, button4, button5, button6, button7, button8, button9, buttonSend, buttonBack;
+    private ImageButton buttonHome, buttonStatistics;
     private TextView textViewScore;
     private String ScoreInput = "";
     private ImageView icDelete;
@@ -40,6 +45,8 @@ public class MenuInGame extends AppCompatActivity {
     private int playerToStart = 0;
 
     private Stack<ScoreState> previousScores = new Stack<>();
+
+    private DBHandler dbHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,21 @@ public class MenuInGame extends AppCompatActivity {
 
         textViewScore.setText("");
         icDelete.setVisibility(View.GONE);
+
+        dbHandler = new DBHandler(this);
+
+        dbHandler.clearStatistiqueInGame();
+
+        for (Joueur joueur : paramGame.getJoueur()) {
+            dbHandler.addNewStatistiqueInGame(joueur.getName(), paramGame.getScore()+"", "Premier Tour");
+        }
+
+        buttonStatistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showStatistique();
+            }
+        });
 
         icDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +135,82 @@ public class MenuInGame extends AppCompatActivity {
         });
     }
 
+    private void saveGameStatistics(String winnerName) {
+        List<StatistiqueInGame> statsList = dbHandler.getStatistiqueInGame();
+
+        for (StatistiqueInGame stat : statsList) {
+            dbHandler.addNewHistoriqueScore(dbHandler.getStatistique().size()+1,stat.getName(), stat.getScoreTotal()+"", stat.getDernierCoup()+"");
+        }
+
+        dbHandler.addNewStatistique(winnerName, dbHandler.getStatistique().size()+1);
+    }
+
+    private void showStatistique() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MenuInGame.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_statistique_in_game, null);
+        builder.setView(dialogView);
+
+        // Références aux vues du dialog
+        TableLayout tableLayout = dialogView.findViewById(R.id.tableLayout); // Référencer le TableLayout
+        Button btnClose = dialogView.findViewById(R.id.btnClose);
+
+        // Réinitialiser le TableLayout pour éviter d'ajouter des données en double
+        tableLayout.removeViews(1, tableLayout.getChildCount() - 1); // Enlève toutes les lignes sauf l'en-tête
+
+        // Récupérer les statistiques
+        List<StatistiqueInGame> statsList = dbHandler.getStatistiqueInGame();
+
+        // Ajouter chaque statistique au tableau
+        for (StatistiqueInGame stat : statsList) {
+            TableRow tableRow = new TableRow(this);
+
+            // Nom
+            TextView nameTextView = new TextView(this);
+            nameTextView.setText(stat.getName());
+            nameTextView.setPadding(8, 8, 8, 8);
+            nameTextView.setLayoutParams(new TableRow.LayoutParams(
+                    0,
+                    TableRow.LayoutParams.WRAP_CONTENT,
+                    1.0f));
+            tableRow.addView(nameTextView);
+
+            // Score Total
+            TextView totalScoreTextView = new TextView(this);
+            totalScoreTextView.setText(String.valueOf(stat.getScoreTotal()));
+            totalScoreTextView.setPadding(8, 8, 8, 8);
+            totalScoreTextView.setLayoutParams(new TableRow.LayoutParams(
+                    0,
+                    TableRow.LayoutParams.WRAP_CONTENT,
+                    1.0f));
+            tableRow.addView(totalScoreTextView);
+
+            // Dernier Score
+            TextView lastScoreTextView = new TextView(this);
+            lastScoreTextView.setText(String.valueOf(stat.getDernierCoup()));
+            lastScoreTextView.setPadding(8, 8, 8, 8);
+            lastScoreTextView.setLayoutParams(new TableRow.LayoutParams(
+                    0,
+                    TableRow.LayoutParams.WRAP_CONTENT,
+                    1.0f));
+            tableRow.addView(lastScoreTextView);
+
+            // Ajouter la ligne de données au tableau
+            tableLayout.addView(tableRow);
+        }
+
+        AlertDialog alertDialog = builder.create();
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+    }
+
     private void showRulesGame () {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_type_game, null);
@@ -143,6 +241,9 @@ public class MenuInGame extends AppCompatActivity {
         else if (Objects.equals(paramGame.getDebut(), "Master") && Objects.equals(paramGame.getFin(), "Master")) {
             tvMessage.setText("RAPPEL : Vous etes en Master Vous devrez donc faire un Double ou un triple en premier coup et en dernier coup");
         }
+        else {
+            return;
+        }
 
         btnOK.setOnClickListener(v -> {
             alertDialog.dismiss();
@@ -161,7 +262,7 @@ public class MenuInGame extends AppCompatActivity {
         button7 = findViewById(R.id.button7);
         button8 = findViewById(R.id.button8);
         button9 = findViewById(R.id.button9);
-
+        buttonStatistics = findViewById(R.id.buttonStatistics);
         buttonSend = findViewById(R.id.buttonSend);
         buttonBack = findViewById(R.id.buttonBack); // Ensure buttonBack is defined in XML
 
@@ -274,10 +375,13 @@ public class MenuInGame extends AppCompatActivity {
             }
 
             if ((scoreList.get(currentPlayerToModify) - enteredScore) >= 0) {
-                // Save current state before modifying the score
+                dbHandler.addNewStatistiqueInGame(paramGame.getJoueur().get(currentPlayerToModify).getName(), scoreList.get(currentPlayerToModify)+"", enteredScore+"");
+
                 previousScores.push(new ScoreState(currentPlayerToModify, scoreList.get(currentPlayerToModify)));
                 scoreList.set(currentPlayerToModify, scoreList.get(currentPlayerToModify) - enteredScore);
             }else {
+                dbHandler.addNewStatistiqueInGame(paramGame.getJoueur().get(currentPlayerToModify).getName(), scoreList.get(currentPlayerToModify)+"", "Score non valide");
+
                 previousScores.push(new ScoreState(currentPlayerToModify, scoreList.get(currentPlayerToModify)));
                 Toast.makeText(MenuInGame.this, "Le score totale ne peut être inférieur à 0", Toast.LENGTH_SHORT).show();
             }
@@ -363,6 +467,14 @@ public class MenuInGame extends AppCompatActivity {
         TextView tvNamePlayer = dialogView.findViewById(R.id.tvWinnerName);
 
         tvNamePlayer.setText("Le gagnant est " + paramGame.getJoueur().get(currentPlayerToModify).getName());
+
+        saveGameStatistics(paramGame.getJoueur().get(currentPlayerToModify).getName());
+
+        dbHandler.clearStatistiqueInGame();
+
+        for (Joueur joueur : paramGame.getJoueur()) {
+            dbHandler.addNewStatistiqueInGame(joueur.getName(), paramGame.getScore()+"", "Premier Tour");
+        }
 
         btnHome.setOnClickListener(v -> {
             alertDialog.dismiss();
